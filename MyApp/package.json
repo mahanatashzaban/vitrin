@@ -1,0 +1,21 @@
+{
+  "name": "MyApp2",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start"
+  },
+  "dependencies": {
+
+
+    "@react-native-community/cli": "latest"
+ 
+      "expo": "^49.0.0", // Use the appropriate version for your project
+      "react": "18.2.0",
+      "react-dom": "18.2.0",
+      "react-native": "0.72.10",
+
+
+  }
+}
+

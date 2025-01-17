@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "865de51e-5f19-4a20-9493-15c4bcd9a802"
+      }
+    },
+    "android": {
+      "package": "com.atashzaban.myapp"
+    }
+  }
+}
