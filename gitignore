@@ -1,0 +1,20 @@
+# Ignore environment variables
+.env
+
+# Ignore log files
+*.log
+
+# Ignore node modules
+node_modules/
+
+# Ignore temporary files
+*.tmp
+
+Ehsan.jks
+
+my-release-key.jks
+
+.Ehsan.jks.swp
+
+MyApp/
+
