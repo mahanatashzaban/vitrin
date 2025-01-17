@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.atashzaban.MyNewApp"
+      "bundleIdentifier": "Vitrin"
     },
     "android": {
       "adaptiveIcon": {

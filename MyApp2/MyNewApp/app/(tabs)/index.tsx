@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,15 @@ import {
   ScrollView,
   Linking,
 } from "react-native";
+import Lottie from 'lottie-react-native'; // Import Lottie
+import animation from '../animat.json'; // Go back one directory to access the JSON file
+
+// Loader component with animation
+const Loader = () => (
+  <View style={styles.loaderContainer}>
+    <Lottie source={animation} autoPlay loop /> {/* Play the Lottie animation */}
+  </View>
+);
 
 // Convert English numbers to Persian numbers
 const convertToPersianNumbers = (num) => {
@@ -24,10 +33,9 @@ const formatNumber = (input) => {
 
   let formatted;
   let tempNum = num;
-  const length = num.length;
 
   // Format based on length
-  if (length <= 3) {
+  if (num.length <= 3) {
     formatted = num;
   } else {
     const segments = [];
@@ -42,34 +50,37 @@ const formatNumber = (input) => {
   return formatted;
 };
 
-const App = () => {
+const MainApp = () => {
   const [amount, setAmount] = useState("");
   const [initialDate, setInitialDate] = useState({ day: "", month: "", year: "" });
   const [targetDate, setTargetDate] = useState({ day: "", month: "", year: "" });
   const [modalVisible, setModalVisible] = useState(false);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
+  
   const calculateValue = () => {
     setErrorMessage("");
     const { day: initialDay, month: initialMonth, year: initialYear } = initialDate;
     const { day: targetDay, month: targetMonth, year: targetYear } = targetDate;
 
+    // Validate input fields
     if (!initialDay || !initialMonth || !initialYear ||
         !targetDay || !targetMonth || !targetYear || 
         !amount || parseFloat(amount.replace(/\./g, '')) <= 0) {
-      Alert.alert("Error", "لطفا همه فیلدها را پر کنید و مقدار صحیحی وارد کنید.");
+      Alert.alert("خطا", "لطفا همه فیلدها را پر کنید و مقدار صحیحی وارد کنید.");
       return;
     }
 
     const initial = new Date(initialYear, initialMonth - 1, initialDay);
     const target = new Date(targetYear, targetMonth - 1, targetDay);
 
+    // Validate date range
     if (initial >= target) {
       setErrorMessage("تاریخ ها بدرستی وارد نشده اند");
       return;
     }
 
+    // Calculate future value based on simple interest formula
     const timeDifferenceInMonths = (target.getFullYear() - initial.getFullYear()) * 12 + (target.getMonth() - initial.getMonth());
     const t = timeDifferenceInMonths / 12; // Convert to years
     const i = 0.43; // Example interest rate
@@ -85,7 +96,7 @@ const App = () => {
     setAmount(formattedValue);
   };
 
-  // Custom Picker component
+  // Custom Picker Component
   const CustomPicker = ({ selectedValue, onValueChange, items, placeholder }) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -132,9 +143,10 @@ const App = () => {
     );
   };
 
-  const days = [...Array(31).keys()].map(i => ({ label: convertToPersianNumbers(i + 1), value: i + 1 }));
-  const months = [...Array(12).keys()].map(i => ({ label: convertToPersianNumbers(i + 1), value: i + 1 }));
-  const years = [...Array(84).keys()].map(i => ({ label: convertToPersianNumbers(1403 - i), value: 1403 - i }));
+  // Prepare day, month, and year options for pickers
+  const days = Array.from({ length: 31 }, (_, i) => ({ label: convertToPersianNumbers(i + 1), value: i + 1 }));
+  const months = Array.from({ length: 12 }, (_, i) => ({ label: convertToPersianNumbers(i + 1), value: i + 1 }));
+  const years = Array.from({ length: 84 }, (_, i) => ({ label: convertToPersianNumbers(1403 - i), value: 1403 - i }));
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -142,6 +154,7 @@ const App = () => {
         <Text style={styles.title}>محاسبه ارزش پول</Text>
       </View>
 
+      {/* Input for amount */}
       <View style={styles.inputGroup}>
         <TextInput
           style={styles.input}
@@ -150,10 +163,11 @@ const App = () => {
           value={amount}
           onChangeText={handleAmountChange}
           textAlign="right"
-          placeholderTextColor="#808080" // Set the placeholder color here
+          placeholderTextColor="#808080"
         />
       </View>
 
+      {/* Initial Date Picker */}
       <View style={styles.datePickerGroup}>
         <Text style={styles.inputLabel}>زمانی که پول دادم یا گرفتم:</Text>
         <View style={styles.datePickers}>
@@ -178,6 +192,7 @@ const App = () => {
         </View>
       </View>
 
+      {/* Target Date Picker */}
       <View style={styles.datePickerGroup}>
         <Text style={styles.inputLabel}>ارزش پول در این تاریخ:</Text>
         <View style={styles.datePickers}>
@@ -202,12 +217,15 @@ const App = () => {
         </View>
       </View>
 
+      {/* Calculate Button */}
       <TouchableOpacity style={styles.calculateButton} onPress={calculateValue}>
         <Text style={styles.buttonText}>محاسبه کن</Text>
       </TouchableOpacity>
 
+      {/* Error message display */}
       {errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
 
+      {/* Result Modal */}
       <Modal
         animationType="slide"
         transparent
@@ -225,17 +243,48 @@ const App = () => {
         </View>
       </Modal>
 
+      {/* Footer */}
       <View style={styles.footer}>
         <Text>@تمام حقوق متعلق به هزار ویترین می باشد</Text>
         <TouchableOpacity onPress={() => Linking.openURL('mailto:atashzaban.e@gmail.com')}>
-          <Text style={styles.footerLink}>برای هرگونه انتقاد یا پیشنهاد کلیک یفرمایید</Text>
+          <Text style={styles.footerLink}>برای هرگونه انتقاد یا پیشنهاد کلیک بفرمایید</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
 
+const App = () => {
+  const [loading, setLoading] = useState(true); // State for loading
+
+  useEffect(() => {
+    // Hide the loader after 3 seconds
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000); // 3000 milliseconds for 3 seconds
+
+    return () => clearTimeout(timer); // Cleanup on component unmount
+  }, []);
+
+  return (
+    <View style={{ flex: 1 }}>
+      {loading ? <Loader /> : <MainApp />} {/* Show loader or main app based on loading state */}
+    </View>
+  );
+};
+
+// Styles
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5', // Set background color to #F5F5F5
+  },
+  loaderText: {
+    color: 'white',
+    fontSize: 20,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: "#F5F5F5",
@@ -248,28 +297,27 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     textAlign: "center",
-    marginTop: 50,
+    marginTop: 100, // Increased marginTop from 50 to 100
     color: "black",
     fontFamily: "Titr",
     fontWeight: "bold",
   },
   inputGroup: {
     marginBottom: 15,
-    width: '100%', // Set to a reasonable width
+    width: '100%',
     backgroundColor: "white",
     borderRadius: 5,
   },
   input: {
     height: 60,
-    borderColor: "#ccc", // Same border color as the custom picker
-    borderWidth: 1, 
-    borderRadius: 5, // Same border radius
-    padding: 10, // Same padding
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
     fontSize: 20,
     textAlign: "right",
     backgroundColor: "white",
     fontFamily: "Titr",
-
   },
   datePickerGroup: {
     marginBottom: 20,
@@ -288,13 +336,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   customPickerContainer: {
-    width: "30%", // Set to a proportional width
+    width: "30%",
   },
   customPicker: {
     borderWidth: 1,
-    borderColor: "#ccc", // Same color for consistency
+    borderColor: "#ccc",
     borderRadius: 5,
-    padding: 10, // Match the input
+    padding: 10,
     backgroundColor: "white",
     alignItems: "center",
     zIndex: 2,
@@ -344,9 +392,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#B000FF",
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5, // Ensure border radius is consistent
+    borderRadius: 5,
     alignItems: "center",
-    width: "80%", // Match with other buttons
+    width: "80%",
     alignSelf: "center",
   },
   buttonText: {
