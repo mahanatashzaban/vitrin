@@ -10,14 +10,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "Vitrin"
+      "bundleIdentifier": "com.atashzaban.vitrin2"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "io.kodular.atashzaban_e.vitrin"
+      "package": "com.atashzaban.vitrin2"
     },
     "web": {
       "bundler": "metro",
